@@ -1,3 +1,6 @@
+/*
+ * testing
+ */
 package com.bignerdranch.android.geoquiz;
 
 import android.content.Intent;
@@ -8,8 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-
 public class CheatActivity extends ActionBarActivity {
     public static final String EXTRA_ANSWER_IS_TRUE = "com.bignerdranch.android.geoquiz.answer_is_true";
     public static final String EXTRA_ANSWER_SHOWN = "com.bignerdranch.android.geoquiz.answer_shown";
