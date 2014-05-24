@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="D:\Users\mmcfa_000\Documents\Programming\AndroidStudioProjects\GeoQuiz" />
-            <option value="D:\Users\mmcfa_000\Documents\Programming\AndroidStudioProjects\GeoQuiz\GeoQuiz" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/GeoQuiz" />
           </set>
         </option>
       </GradleProjectSettings>

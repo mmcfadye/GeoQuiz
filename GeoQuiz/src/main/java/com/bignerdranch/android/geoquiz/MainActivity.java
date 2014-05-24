@@ -1,6 +1,8 @@
 package com.bignerdranch.android.geoquiz;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -15,14 +17,23 @@ import android.widget.Toast;
 public class MainActivity extends ActionBarActivity {
     private static final String TAG = "MainActivity";
     private static final String KEY_INDEX = "index";
+    private static final String CHEATER_INDEX = "cheaterIndex";
 
     private Button mTrueButton;
     private Button mFalseButton;
     private Button nextButton;
+    private Button prevButton;
     private Button cheatButton;
     private TextView questionTextView;
     private int currentIndex = 0;
-    private boolean isCheater;
+
+    private boolean[] cheated = new boolean[] {
+        false,
+        false,
+        false,
+        false,
+        false
+    };
 
     private TrueFalse[] questionBank = new TrueFalse[] {
         new TrueFalse(R.string.question_oceans, true),
@@ -38,7 +49,18 @@ public class MainActivity extends ActionBarActivity {
         Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_main);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            ActionBar actionBar = getActionBar();
+            actionBar.setSubtitle("Bodies of Water");
+        }
+
         questionTextView = (TextView)findViewById(R.id.question_text_view);
+        questionTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getNextQuestion();
+            }
+        });
         updateQuestion();
 
         mTrueButton = (Button)findViewById(R.id.true_button);
@@ -61,9 +83,15 @@ public class MainActivity extends ActionBarActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentIndex = (currentIndex + 1) % questionBank.length;
-                isCheater = false;
-                updateQuestion();
+                getNextQuestion();
+            }
+        });
+
+        prevButton = (Button)findViewById(R.id.prev_button);
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getPrevQuestion();
             }
         });
 
@@ -80,7 +108,21 @@ public class MainActivity extends ActionBarActivity {
 
         if (savedInstanceState != null) {
             currentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            cheated[currentIndex] = savedInstanceState.getBoolean(CHEATER_INDEX, false);
         }
+        updateQuestion();
+    }
+
+    private void getPrevQuestion() {
+        currentIndex = (currentIndex - 1) % questionBank.length;
+        if (currentIndex < 0) {
+            currentIndex = questionBank.length - 1;
+        }
+        updateQuestion();
+    }
+
+    private void getNextQuestion() {
+        currentIndex = (currentIndex + 1) % questionBank.length;
         updateQuestion();
     }
 
@@ -89,7 +131,7 @@ public class MainActivity extends ActionBarActivity {
         if (data == null) {
             return;
         }
-        isCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+        cheated[currentIndex] = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
     }
 
     @Override
@@ -127,6 +169,7 @@ public class MainActivity extends ActionBarActivity {
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG, "onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX, currentIndex);
+        savedInstanceState.putBooleanArray(CHEATER_INDEX, cheated);
     }
 
     private void updateQuestion() {
@@ -139,7 +182,7 @@ public class MainActivity extends ActionBarActivity {
 
         int messageResId = 0;
 
-        if (isCheater) {
+        if (cheated[currentIndex]) {
             messageResId = R.string.judgment_toast;
         }
         else {

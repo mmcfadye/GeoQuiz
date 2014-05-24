@@ -4,25 +4,39 @@
 package com.bignerdranch.android.geoquiz;
 
 import android.content.Intent;
+import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 public class CheatActivity extends ActionBarActivity {
+    private static final String TAG = "CheatActivity";
     public static final String EXTRA_ANSWER_IS_TRUE = "com.bignerdranch.android.geoquiz.answer_is_true";
     public static final String EXTRA_ANSWER_SHOWN = "com.bignerdranch.android.geoquiz.answer_shown";
+    public static final String EXTRA_CHEATER = "com.bignerdranch.android.geoquiz.cheater";
 
     private boolean answerIsTrue;
+    private boolean answerShown;
 
     private TextView answerTextView;
     private Button showAnswer;
+    private TextView apiLevel;
 
-    private void setAnswerShownResult(boolean isAnswerShown) {
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putBoolean(EXTRA_CHEATER, answerShown);
+    }
+
+    private void setAnswerShownResult(boolean answerShown) {
         Intent data = new Intent();
-        data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
+        this.answerShown = answerShown;
+        data.putExtra(EXTRA_ANSWER_SHOWN, this.answerShown);
         setResult(RESULT_OK, data);
     }
 
@@ -30,7 +44,14 @@ public class CheatActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cheat);
-        setAnswerShownResult(false);
+
+        if (savedInstanceState != null) {
+            setAnswerShownResult(savedInstanceState.getBoolean(EXTRA_CHEATER, false));
+        }
+        else {
+            setAnswerShownResult(false);
+        }
+
         answerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
 
         answerTextView = (TextView)findViewById(R.id.showAnswerButton);
@@ -47,6 +68,9 @@ public class CheatActivity extends ActionBarActivity {
                 setAnswerShownResult(true);
             }
         });
+
+        apiLevel = (TextView)findViewById(R.id.showAPITextView);
+        apiLevel.setText("API level " + Build.VERSION.SDK_INT);
     }
 
 

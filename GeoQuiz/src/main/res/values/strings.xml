@@ -20,5 +20,6 @@
     <string name="judgment_toast">Cheating is wrong.</string>
     <string name="title_activity_cheat">CheatActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="prev_button">Prev</string>
 
 </resources>
